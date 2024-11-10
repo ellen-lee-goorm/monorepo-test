@@ -63,7 +63,7 @@ jobs:
           yarn run version
 
           # 버전 커밋을 원격에 푸시
-          # git push origin release/${{ env.RELEASE_BRANCH_NAME }}
+          git push origin release/${{ env.RELEASE_BRANCH_NAME }}
 
       - name: Verify and Download CHANGELOG.md
         run: |
