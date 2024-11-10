@@ -74,100 +74,107 @@ jobs:
           fi
           cat CHANGELOG.md
 
-      # 이번 스프린트 작업 내역 파싱(릴리즈 노트를 위한 내용)
-      - name: Read the latest minor CHANGELOG entry
+      # 릴리즈 브랜치 finish를 테스트 하기 위함
+      - name: Publish Release Branch
         run: |
-          # 최근 '##' 헤더부터 이전 '##' 헤더까지 내용을 CHANGELOG.md에서 추출
-          CHANGELOG=$(awk '/^## /{if (found) exit; found=1} found{print}' CHANGELOG.md)
+          git flow init -d
+          git checkout release/${{ env.RELEASE_BRANCH_NAME }}
+          git flow release finish -Fpn ${{ env.RELEASE_BRANCH_NAME }}
 
-          # 마크다운 타이틀을 Slack에서 굵게로 변환
-          CHANGELOG=$(echo "$CHANGELOG" | sed -E 's/^##+ (.+)/*\1*/')
+      # # 이번 스프린트 작업 내역 파싱(릴리즈 노트를 위한 내용)
+      # - name: Read the latest minor CHANGELOG entry
+      #   run: |
+      #     # 최근 '##' 헤더부터 이전 '##' 헤더까지 내용을 CHANGELOG.md에서 추출
+      #     CHANGELOG=$(awk '/^## /{if (found) exit; found=1} found{print}' CHANGELOG.md)
 
-          # 마크다운 URL을 Slack 포맷 URL로 변환
-          CHANGELOG=$(echo "$CHANGELOG" | sed -E 's/\\?([[][^]]+]\\?)\\?[(]([^()]+)\\?[)]/<\2|\1>/g')
+      #     # 마크다운 타이틀을 Slack에서 굵게로 변환
+      #     CHANGELOG=$(echo "$CHANGELOG" | sed -E 's/^##+ (.+)/*\1*/')
 
-          # 수정된 변경로그를 환경 파일에 작성
-          echo "CHANGELOG_CONTENT<<EOF" >> $GITHUB_ENV
-          echo "$CHANGELOG" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+      #     # 마크다운 URL을 Slack 포맷 URL로 변환
+      #     CHANGELOG=$(echo "$CHANGELOG" | sed -E 's/\\?([[][^]]+]\\?)\\?[(]([^()]+)\\?[)]/<\2|\1>/g')
 
-      - name: Get current package version
-        id: package-version
-        uses: martinbeentjes/npm-get-version-action@v1.2.3
-        with:
-          path: packages/my-components
+      #     # 수정된 변경로그를 환경 파일에 작성
+      #     echo "CHANGELOG_CONTENT<<EOF" >> $GITHUB_ENV
+      #     echo "$CHANGELOG" >> $GITHUB_ENV
+      #     echo "EOF" >> $GITHUB_ENV
 
-      - name: Send to Slack via Webhook
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          CHANGELOG_CONTENT: ${{ env.CHANGELOG_CONTENT }}
-        run: |
-          # JSON 구문 오류를 방지하기 위해 변경로그 내용의 이중 따옴표를 이스케이프
-          ESCAPED_CHANGELOG_CONTENT=$(echo "$CHANGELOG_CONTENT" | sed 's/\^H//g' | sed 's/"/\\"/g')
+      # - name: Get current package version
+      #   id: package-version
+      #   uses: martinbeentjes/npm-get-version-action@v1.2.3
+      #   with:
+      #     path: packages/my-components
 
-          echo "파싱된 CHANGELOG.md"
-          echo "$ESCAPED_CHANGELOG_CONTENT"
+      # - name: Send to Slack via Webhook
+      #   env:
+      #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      #     CHANGELOG_CONTENT: ${{ env.CHANGELOG_CONTENT }}
+      #   run: |
+      #     # JSON 구문 오류를 방지하기 위해 변경로그 내용의 이중 따옴표를 이스케이프
+      #     ESCAPED_CHANGELOG_CONTENT=$(echo "$CHANGELOG_CONTENT" | sed 's/\^H//g' | sed 's/"/\\"/g')
 
-          # 결합된 메시지를 Slack으로 전송
-          curl -X POST --data-urlencode "payload={
-            \"username\": \"release-bot\",
-            \"blocks\": [
-              {
-                \"type\": \"header\",
-                \"text\": {
-                  \"type\": \"plain_text\",
-                  \"text\": \"${{ steps.package-version.outputs.current-version }} 릴리즈 열차가 출발합니다 🚂\",
-                  \"emoji\": true
-                }
-              },
-              {
-                \"type\": \"section\",
-                \"text\": {
-                  \"type\": \"mrkdwn\",
-                  \"text\": \"Vapor ${{ steps.package-version.outputs.current-version }} 버전의 *릴리즈 노트* 를 작성해주세요 \n이번 스프린트에 릴리즈할 *피그마 링크를 댓글에 달아주세요*\"
-                }
-              },
-              {
-                \"type\": \"divider\"
-              },
-              {
-                \"type\": \"section\",
-                \"text\": {
-                  \"type\": \"mrkdwn\",
-                  \"text\": \"<https://github.com/ellen-lee-goorm/gds-onboarding/tree/release/${{env.RELEASE_BRANCH_NAME}}|release/${{env.RELEASE_BRANCH_NAME}}>\"
-                }
-              },
-              {
-                \"type\": \"section\",
-                \"text\": {
-                  \"type\": \"mrkdwn\",
-                  \"text\": \"${ESCAPED_CHANGELOG_CONTENT}\"
-                }
-              },
-              {
-                \"type\": \"section\",
-                \"text\": {
-                  \"type\": \"mrkdwn\",
-                  \"text\": \"> 릴리즈 항목을 모두 확인했다면, 완료 버튼을 눌러주세요\"
-                }
-              },
-              {
-                \"type\": \"actions\",
-                \"elements\": [
-                  {
-                    \"type\": \"button\",
-                    \"text\": {
-                      \"type\": \"plain_text\",
-                      \"text\": \"완료\",
-                      \"emoji\": true
-                    },
-                    \"value\": \"complete_release\",
-                    \"action_id\": \"complete_write_release_note\"
-                  }
-                ]
-              }
-            ]
-          }" "${{ secrets.SLACK_WEBHOOK_URL }}"
+      #     echo "파싱된 CHANGELOG.md"
+      #     echo "$ESCAPED_CHANGELOG_CONTENT"
+
+      #     # 결합된 메시지를 Slack으로 전송
+      #     curl -X POST --data-urlencode "payload={
+      #       \"username\": \"release-bot\",
+      #       \"blocks\": [
+      #         {
+      #           \"type\": \"header\",
+      #           \"text\": {
+      #             \"type\": \"plain_text\",
+      #             \"text\": \"${{ steps.package-version.outputs.current-version }} 릴리즈 열차가 출발합니다 🚂\",
+      #             \"emoji\": true
+      #           }
+      #         },
+      #         {
+      #           \"type\": \"section\",
+      #           \"text\": {
+      #             \"type\": \"mrkdwn\",
+      #             \"text\": \"Vapor ${{ steps.package-version.outputs.current-version }} 버전의 *릴리즈 노트* 를 작성해주세요 \n이번 스프린트에 릴리즈할 *피그마 링크를 댓글에 달아주세요*\"
+      #           }
+      #         },
+      #         {
+      #           \"type\": \"divider\"
+      #         },
+      #         {
+      #           \"type\": \"section\",
+      #           \"text\": {
+      #             \"type\": \"mrkdwn\",
+      #             \"text\": \"<https://github.com/ellen-lee-goorm/gds-onboarding/tree/release/${{env.RELEASE_BRANCH_NAME}}|release/${{env.RELEASE_BRANCH_NAME}}>\"
+      #           }
+      #         },
+      #         {
+      #           \"type\": \"section\",
+      #           \"text\": {
+      #             \"type\": \"mrkdwn\",
+      #             \"text\": \"${ESCAPED_CHANGELOG_CONTENT}\"
+      #           }
+      #         },
+      #         {
+      #           \"type\": \"section\",
+      #           \"text\": {
+      #             \"type\": \"mrkdwn\",
+      #             \"text\": \"> 릴리즈 항목을 모두 확인했다면, 완료 버튼을 눌러주세요\"
+      #           }
+      #         },
+      #         {
+      #           \"type\": \"actions\",
+      #           \"elements\": [
+      #             {
+      #               \"type\": \"button\",
+      #               \"text\": {
+      #                 \"type\": \"plain_text\",
+      #                 \"text\": \"완료\",
+      #                 \"emoji\": true
+      #               },
+      #               \"value\": \"complete_release\",
+      #               \"action_id\": \"complete_write_release_note\"
+      #             }
+      #           ]
+      #         }
+      #       ]
+      #     }" "${{ secrets.SLACK_WEBHOOK_URL }}"
 
   release-finish:
     runs-on: ubuntu-latest
