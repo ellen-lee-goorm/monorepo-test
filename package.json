@@ -7,13 +7,13 @@
     "packages/*"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "version": "lerna version --no-git-tag-version --no-push --yes"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "conventional-changelog-conventionalcommits": "^8.0.0",
+    "conventional-changelog-conventionalcommits": "^4.6.1",
     "lerna": "^8.1.9",
     "typescript": "^5.6.3"
   }
