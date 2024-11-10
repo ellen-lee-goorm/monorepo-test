@@ -1,0 +1,207 @@
+name: 정기 릴리즈를 위한 ChangeLog 생성
+
+on:
+  workflow_dispatch:
+  repository_dispatch:
+    types: [릴리즈 완료]
+  # schedule:
+  #   - cron: "0 9 * * 1"  # 예: 매주 월요일 오전 9시에 실행 (UTC 기준)
+
+jobs:
+  release-start:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 브랜치 최신화
+      - name: Update remote branches
+        run: git remote update
+
+      - name: Checkout and update develop branch
+        run: |
+          git checkout develop
+          git pull origin develop
+
+      - name: Checkout and update master branch
+        run: |
+          git checkout master
+          git pull origin master
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18.20.0"
+
+      - name: Install git flow
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git-flow
+
+      - name: Get Release branch's name
+        run: |
+          TODAY_DATE=$(node -e 'const today = new Date(); console.log(`${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, "0")}${String(today.getDate()).padStart(2, "0")}`)')
+          echo "RELEASE_BRANCH_NAME=${TODAY_DATE}-0" >> $GITHUB_ENV
+
+      # 릴리즈 브랜치 생성
+      - name: Start Release with git flow and lerna version
+        run: |
+          git flow init -d
+          git flow release start -F ${{ env.RELEASE_BRANCH_NAME }}
+
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          git commit --allow-empty -m "feat: 정기 릴리즈를 위한 커밋"
+
+          git flow release publish ${{ env.RELEASE_BRANCH_NAME }}
+          yarn run version
+
+      - name: Verify and Download CHANGELOG.md
+        run: |
+          if [ -f "CHANGELOG.md" ]; then
+            echo "CHANGELOG.md found in repository."
+          else
+            echo "CHANGELOG.md not found."
+            exit 1
+          fi
+          cat CHANGELOG.md
+
+      # 이번 스프린트 작업 내역 파싱(릴리즈 노트를 위한 내용)
+      - name: Read the latest minor CHANGELOG entry
+        run: |
+          # 최근 '##' 헤더부터 이전 '##' 헤더까지 내용을 CHANGELOG.md에서 추출
+          CHANGELOG=$(awk '/^## /{if (found) exit; found=1} found{print}' CHANGELOG.md)
+
+          # 마크다운 타이틀을 Slack에서 굵게로 변환
+          CHANGELOG=$(echo "$CHANGELOG" | sed -E 's/^##+ (.+)/*\1*/')
+
+          # 마크다운 URL을 Slack 포맷 URL로 변환
+          CHANGELOG=$(echo "$CHANGELOG" | sed -E 's/\\?([[][^]]+]\\?)\\?[(]([^()]+)\\?[)]/<\2|\1>/g')
+
+          # 수정된 변경로그를 환경 파일에 작성
+          echo "CHANGELOG_CONTENT<<EOF" >> $GITHUB_ENV
+          echo "$CHANGELOG" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Get current package version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@v1.2.3
+        with:
+          path: packages/my-components
+
+      - name: Send to Slack via Webhook
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          CHANGELOG_CONTENT: ${{ env.CHANGELOG_CONTENT }}
+        run: |
+          # JSON 구문 오류를 방지하기 위해 변경로그 내용의 이중 따옴표를 이스케이프
+          ESCAPED_CHANGELOG_CONTENT=$(echo "$CHANGELOG_CONTENT" | sed 's/\^H//g' | sed 's/"/\\"/g')
+
+          # 결합된 메시지를 Slack으로 전송
+          curl -X POST --data-urlencode "payload={
+            \"username\": \"release-bot\",
+            \"blocks\": [
+              {
+                \"type\": \"header\",
+                \"text\": {
+                  \"type\": \"plain_text\",
+                  \"text\": \"${{ steps.package-version.outputs.current-version }} 릴리즈 열차가 출발합니다 🚂\",
+                  \"emoji\": true
+                }
+              },
+              {
+                \"type\": \"section\",
+                \"text\": {
+                  \"type\": \"mrkdwn\",
+                  \"text\": \"Vapor ${{ steps.package-version.outputs.current-version }} 버전의 *릴리즈 노트* 를 작성해주세요 \n이번 스프린트에 릴리즈할 *피그마 링크를 댓글에 달아주세요*\"
+                }
+              },
+              {
+                \"type\": \"divider\"
+              },
+              {
+                \"type\": \"section\",
+                \"text\": {
+                  \"type\": \"mrkdwn\",
+                  \"text\": \"<https://github.com/ellen-lee-goorm/gds-onboarding/tree/release/${{env.RELEASE_BRANCH_NAME}}|release/${{env.RELEASE_BRANCH_NAME}}>\"
+                }
+              },
+              {
+                \"type\": \"section\",
+                \"text\": {
+                  \"type\": \"mrkdwn\",
+                  \"text\": \"${ESCAPED_CHANGELOG_CONTENT}\"
+                }
+              },
+              {
+                \"type\": \"section\",
+                \"text\": {
+                  \"type\": \"mrkdwn\",
+                  \"text\": \"> 릴리즈 항목을 모두 확인했다면, 완료 버튼을 눌러주세요\"
+                }
+              },
+              {
+                \"type\": \"actions\",
+                \"elements\": [
+                  {
+                    \"type\": \"button\",
+                    \"text\": {
+                      \"type\": \"plain_text\",
+                      \"text\": \"완료\",
+                      \"emoji\": true
+                    },
+                    \"value\": \"complete_release\",
+                    \"action_id\": \"complete_write_release_note\"
+                  }
+                ]
+              }
+            ]
+          }" "${{ secrets.SLACK_WEBHOOK_URL }}"
+
+  release-finish:
+    runs-on: ubuntu-latest
+    # 봇에서 repository_dispatch 받았을 때
+    if: ${{ github.event_name == 'repository_dispatch' && github.event.client_payload.clicked}}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 브랜치 최신화
+      - name: Update remote branches
+        run: git remote update
+
+      - name: Checkout and update develop branch
+        run: |
+          git checkout develop
+          git pull origin develop
+
+      - name: Checkout and update master branch
+        run: |
+          git checkout master
+          git pull origin master
+
+      - name: Install git flow
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git-flow
+
+      - name: Get Release branch's name
+        run: |
+          TODAY_DATE=$(node -e 'const today = new Date(); console.log(`${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, "0")}${String(today.getDate()).padStart(2, "0")}`)')
+          echo "RELEASE_BRANCH_NAME=${TODAY_DATE}-0" >> $GITHUB_ENV
+
+      - name: Set Git user info
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+      # 릴리즈 브랜치 닫기
+      - name: Publish Release Branch
+        run: |
+          git flow init -d
+          git checkout release/${{ env.RELEASE_BRANCH_NAME }}
+          git flow release finish -Fpn ${{ env.RELEASE_BRANCH_NAME }}
