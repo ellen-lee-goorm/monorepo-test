@@ -1,0 +1,20 @@
+{
+  "name": "monorepo-test",
+  "version": "0.0.0",
+  "main": "index.js",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "version": "lerna version --yes"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "conventional-changelog-conventionalcommits": "^4.6.1",
+    "lerna": "^8.1.9",
+    "typescript": "^5.6.3"
+  }
+}
