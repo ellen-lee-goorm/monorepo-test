@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+### [0.1.1](https://github.com/ellen-lee-goorm/monorepo-test/compare/v0.1.0...v0.1.1) (2024-11-10)
+
+
+### Bug Fix
+
+* 의존성 설치 step 추가 ([#3](https://github.com/ellen-lee-goorm/monorepo-test/issues/3)) ([60fe0d6](https://github.com/ellen-lee-goorm/monorepo-test/commit/60fe0d6428dd0f0f9df34d0499613b0a426b6542))
+
+
+### New Features
+
+* 정기 릴리즈 프로세스 자동화 ([#2](https://github.com/ellen-lee-goorm/monorepo-test/issues/2)) ([69b8446](https://github.com/ellen-lee-goorm/monorepo-test/commit/69b84464cdc6343803fa67bf94fb67f8577f567a))
+* 정기 릴리즈를 위한 커밋 ([7228328](https://github.com/ellen-lee-goorm/monorepo-test/commit/72283280cb92d937ccea84ccac4d9e425488ce40))
+
+
+
 ## 0.1.0 (2024-11-10)
 
 
