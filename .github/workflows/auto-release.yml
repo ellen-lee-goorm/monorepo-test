@@ -62,6 +62,9 @@ jobs:
           git flow release publish ${{ env.RELEASE_BRANCH_NAME }}
           yarn run version
 
+          # 버전 커밋을 원격에 푸시
+          git push origin release/${{ env.RELEASE_BRANCH_NAME }}
+
       - name: Verify and Download CHANGELOG.md
         run: |
           echo "전체 CHANGELOG.md"
