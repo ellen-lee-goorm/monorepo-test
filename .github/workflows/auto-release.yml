@@ -61,6 +61,8 @@ jobs:
 
       - name: Verify and Download CHANGELOG.md
         run: |
+          echo "전체 CHANGELOG.md"
+
           if [ -f "CHANGELOG.md" ]; then
             echo "CHANGELOG.md found in repository."
           else
@@ -99,6 +101,9 @@ jobs:
         run: |
           # JSON 구문 오류를 방지하기 위해 변경로그 내용의 이중 따옴표를 이스케이프
           ESCAPED_CHANGELOG_CONTENT=$(echo "$CHANGELOG_CONTENT" | sed 's/\^H//g' | sed 's/"/\\"/g')
+
+          echo "파싱된 CHANGELOG.md"
+          echo "$ESCAPED_CHANGELOG_CONTENT"
 
           # 결합된 메시지를 Slack으로 전송
           curl -X POST --data-urlencode "payload={
