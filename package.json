@@ -7,7 +7,7 @@
     "packages/*"
   ],
   "scripts": {
-    "version": "lerna version --no-git-tag-version --no-push --yes"
+    "version": "lerna version --yes"
   },
   "author": "",
   "license": "ISC",
