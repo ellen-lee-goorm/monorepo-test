@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 0.3.0 (2024-11-11)
+
+
+### New Features
+
+* add test ([#5](https://github.com/ellen-lee-goorm/monorepo-test/issues/5)) ([1f2a09f](https://github.com/ellen-lee-goorm/monorepo-test/commit/1f2a09fda106fe46008aa86f7cf257c71c927a1f))
+
+
+
 ## 0.2.0 (2024-11-11)
 
 
