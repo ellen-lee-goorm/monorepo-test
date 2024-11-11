@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 0.2.0 (2024-11-11)
+
+
+### New Features
+
+* lerna version 시 tag, version 관련 스크립트 추가 ([#4](https://github.com/ellen-lee-goorm/monorepo-test/issues/4)) ([e9e36c3](https://github.com/ellen-lee-goorm/monorepo-test/commit/e9e36c3af0e2ba629b4657cf5fd976f9ce2cb6d3))
+
+
+
 ### [0.1.1](https://github.com/ellen-lee-goorm/monorepo-test/compare/v0.1.0...v0.1.1) (2024-11-10)
 
 **Note:** Version bump only for package my-components
