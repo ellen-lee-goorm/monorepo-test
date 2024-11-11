@@ -27,28 +27,22 @@ jobs:
         with:
           node-version: "18.20.0"
 
-      - name: Install Dependencies
-        run: yarn install
-
       - name: Install git flow
         run: |
           sudo apt-get update
           sudo apt-get install -y git-flow
           git flow init -d
-
       - name: Set Git user info
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
       - name: Updatex develop and master branch
-        run: git checkout develop && git pull origin develop && git checkout master && git pull origin master
+        run: git checkout develop && git pull origin develop --allow-unrelated-histories && git checkout master && git pull origin master --allow-unrelated-histories
 
       - name: Get Release branch's name
         run: |
           TODAY_DATE=$(node -e 'const today = new Date(); console.log(`${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, "0")}${String(today.getDate()).padStart(2, "0")}`)')
           echo "RELEASE_BRANCH_NAME=${TODAY_DATE}-0" >> $GITHUB_ENV
-
       # 릴리즈 브랜치 닫기 (TODO: wq 자동화)
       - name: Publish Release Branch
         run: |
