@@ -193,8 +193,8 @@ jobs:
 
       - name: Set Git user info
         run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
       # 릴리즈 브랜치 닫기
       - name: Publish Release Branch
