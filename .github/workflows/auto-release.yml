@@ -202,7 +202,7 @@ jobs:
           git config --global user.email "actions@github.com"
 
       - name: Updatex develop and master branch
-        run: git checkout develop && git pull origin develop && git checkout master && git pull origin master
+        run: git checkout develop && git pull origin develop --allow-unrelated-histories && git checkout master && git pull origin master --allow-unrelated-histories
 
       - name: Get Release branch's name
         run: |
@@ -219,4 +219,4 @@ jobs:
           git checkout -t origin/release/${{ env.RELEASE_BRANCH_NAME }}
           git log
           git branch
-          git flow release finish -Fpn ${{ env.RELEASE_BRANCH_NAME }}
+          git flow release finish -Fpn  ${{ env.RELEASE_BRANCH_NAME }}
