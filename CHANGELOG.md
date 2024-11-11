@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+### 0.5.1 (2024-11-11)
+
+
+### New Features
+
+* 정기 릴리즈를 위한 커밋 ([4ea9774](https://github.com/ellen-lee-goorm/monorepo-test/commit/4ea97748d588022cc851d65e3977da22070b8d0e))
+
+
+
 ## 0.5.0 (2024-11-11)
 
 
