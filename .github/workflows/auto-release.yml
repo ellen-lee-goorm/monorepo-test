@@ -213,8 +213,8 @@ jobs:
         run: git checkout master && git log
 
       # 릴리즈 브랜치 닫기 (TODO: wq 자동화)
-      # - name: Publish Release Branch
-      #   run: |
-      #     git remote -v
-      #     git checkout -t origin/release/${{ env.RELEASE_BRANCH_NAME }}
-      #     git flow release finish -Fpn ${{ env.RELEASE_BRANCH_NAME }}
+      - name: Publish Release Branch
+        run: |
+          git remote -v
+          git checkout -t origin/release/${{ env.RELEASE_BRANCH_NAME }}
+          git flow release finish -Fpn ${{ env.RELEASE_BRANCH_NAME }}
