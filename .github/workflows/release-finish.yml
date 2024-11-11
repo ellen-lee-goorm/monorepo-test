@@ -47,11 +47,4 @@ jobs:
       - name: Publish Release Branch
         run: |
           git flow release track ${{ env.RELEASE_BRANCH_NAME }}
-
           git flow release finish -Fpn ${{ env.RELEASE_BRANCH_NAME }}
-
-        #   echo "master <-> release"
-        #   git merge-base master release/${{ env.RELEASE_BRANCH_NAME }}
-
-        #   echo "develop <-> release"
-        #   git merge-base develop release/${{ env.RELEASE_BRANCH_NAME }}
