@@ -182,6 +182,20 @@ jobs:
       - name: Update remote branches
         run: git remote update
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18.20.0"
+
+      - name: Install Dependencies
+        run: yarn install
+
+      - name: Install git flow
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git-flow
+          git flow init -d
+
       - name: Checkout and update develop branch
         run: |
           git checkout develop
@@ -191,11 +205,6 @@ jobs:
         run: |
           git checkout master
           git pull origin master
-
-      - name: Install git flow
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y git-flow
 
       - name: Get Release branch's name
         run: |
@@ -210,6 +219,6 @@ jobs:
       # 릴리즈 브랜치 닫기
       - name: Publish Release Branch
         run: |
-          git flow init -d
-          git checkout release/${{ env.RELEASE_BRANCH_NAME }}
+          git remote -v
+          git checkout -t origin/release/${{ env.RELEASE_BRANCH_NAME }}
           git flow release finish -Fpn ${{ env.RELEASE_BRANCH_NAME }}
