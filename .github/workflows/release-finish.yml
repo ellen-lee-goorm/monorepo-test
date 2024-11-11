@@ -54,6 +54,13 @@ jobs:
         run: |
           git remote -v
           git checkout -t origin/release/${{ env.RELEASE_BRANCH_NAME }}
+          echo "릴리즈 브랜치 Log"
           git log
-          git branch
+
+          echo "master <-> release"
+          git merge-base master release
+
+          echo "develop <-> release"
+          git merge-base develop release
+
           git flow release finish -Fpn  ${{ env.RELEASE_BRANCH_NAME }}
