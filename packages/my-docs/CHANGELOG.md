@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 0.5.0 (2024-11-11)
+
+
+### New Features
+
+* github action 수정 ([dcde916](https://github.com/ellen-lee-goorm/monorepo-test/commit/dcde916016abdf0d39dba53960bc73ff69b9814e))
+
+
+
 ## 0.4.0 (2024-11-11)
 
 
