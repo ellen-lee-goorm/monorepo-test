@@ -217,4 +217,5 @@ jobs:
         run: |
           git remote -v
           git checkout -t origin/release/${{ env.RELEASE_BRANCH_NAME }}
+          git log
           git flow release finish -Fpn ${{ env.RELEASE_BRANCH_NAME }}
