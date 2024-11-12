@@ -35,15 +35,6 @@ jobs:
       - name: Install Dependencies
         run: yarn install
 
-      - name: Add a feat Commit
-        run: |
-          git checkout develop
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
-          git commit --allow-empty -m "feat: 정기 릴리즈를 위한 커밋"
-          git push origin develop
-
       - name: Install git flow
         run: |
           sudo apt-get update
@@ -55,10 +46,25 @@ jobs:
           TODAY_DATE=$(node -e 'const today = new Date(); console.log(`${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, "0")}${String(today.getDate()).padStart(2, "0")}`)')
           echo "RELEASE_BRANCH_NAME=${TODAY_DATE}-0" >> $GITHUB_ENV
 
+      - name: Add a feat Commit
+        run: |
+          git checkout develop
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          git commit --allow-empty -m "feat: 정기 릴리즈를 위한 커밋"
+          git push origin develop
+
+          echo "develop 브랜치 log"
+          git log
+
       # 릴리즈 브랜치 생성
       - name: Start Release with git flow and lerna version
         run: |
           git flow release start -F ${{ env.RELEASE_BRANCH_NAME }}
+
+          echo "release 브랜치 log"
+          git log
 
           git flow release publish ${{ env.RELEASE_BRANCH_NAME }}
           yarn run version
