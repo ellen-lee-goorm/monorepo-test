@@ -2,6 +2,11 @@ name: 정기 릴리즈 feat 커밋 추가
 
 on:
   workflow_dispatch:
+    inputs:
+      sprint_number:
+        type: number
+        description: 스프린트 번호
+        required: true
 
 jobs:
   release-finish:
@@ -10,6 +15,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: feature/${{ github.event.inputs.sprint_number }}sp
 
       # 브랜치 최신화
       - name: Update remote branches
