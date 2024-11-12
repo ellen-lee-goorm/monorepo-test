@@ -42,6 +42,7 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
           git commit --allow-empty -m "feat: 정기 릴리즈를 위한 커밋"
+          git push origin develop
 
       - name: Install git flow
         run: |
