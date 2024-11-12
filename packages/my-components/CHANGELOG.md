@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+### 0.5.2 (2024-11-12)
+
+
+### Bug Fix
+
+* release,develop 브랜치 로그 출력 ([110a5ac](https://github.com/ellen-lee-goorm/monorepo-test/commit/110a5ac18c6e37ad95bf48eb6fa4f0e7ad8eeaa4))
+
+
+
 ### 0.5.1 (2024-11-11)
 
 **Note:** Version bump only for package my-components
