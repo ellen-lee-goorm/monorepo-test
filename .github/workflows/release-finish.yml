@@ -45,6 +45,7 @@ jobs:
         run: |
           git checkout master
           git merge develop
+          git push origin master
 
       - name: Get Release branch's name
         run: |
