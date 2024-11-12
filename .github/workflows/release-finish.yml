@@ -41,6 +41,12 @@ jobs:
       - name: Update develop and master branch
         run: git checkout develop && git pull origin develop --allow-unrelated-histories && git checkout master && git pull origin master --allow-unrelated-histories
 
+      - name: Merge develop into master
+        run: |
+          git checkout master
+          git merge develop
+          git push origin master
+
       - name: Get Release branch's name
         run: |
           TODAY_DATE=$(node -e 'const today = new Date(); console.log(`${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, "0")}${String(today.getDate()).padStart(2, "0")}`)')
