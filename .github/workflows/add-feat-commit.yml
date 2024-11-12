@@ -2,8 +2,6 @@ name: 정기 릴리즈 feat 커밋 추가
 
 on:
   workflow_dispatch:
-  # schedule:
-  #   - cron: "0 9 * * 1"  # 예: 매주 월요일 오전 9시에 실행 (UTC 기준)
 
 jobs:
   release-finish:
@@ -17,9 +15,6 @@ jobs:
       - name: Update remote branches
         run: git remote update
 
-      - name: Update develop and master branch
-        run: git checkout develop && git pull origin develop --allow-unrelated-histories && git checkout master && git pull origin master --allow-unrelated-histories
-
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -27,12 +22,8 @@ jobs:
 
       - name: Add a feat Commit
         run: |
-          git checkout develop
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
           git commit --allow-empty -m "feat: 정기 릴리즈를 위한 커밋"
-          git push origin develop
-
-          echo "develop 브랜치 log"
-          git log
+          git push origin
