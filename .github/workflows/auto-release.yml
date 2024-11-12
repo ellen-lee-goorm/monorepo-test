@@ -31,24 +31,6 @@ jobs:
           git checkout master
           git pull origin master
 
-      - name: Add a feat Commit
-        run: |
-          git checkout develop
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
-          git commit --allow-empty -m "feat: 정기 릴리즈를 위한 커밋"
-          git push origin develop
-
-          echo "develop 브랜치 log"
-            git log
-
-      # 이전 step에서 push한 커밋을 가져오기 위한 단계
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
