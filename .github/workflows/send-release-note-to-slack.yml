@@ -39,53 +39,43 @@ jobs:
 
           echo "RESPONSE=$response" >> $GITHUB_ENV
 
-      - name: Check Release Note Version
+      - name: Get Release Note's url
+        id: release-note-url
         uses: actions/github-script@v6
         with:
           script: |
             const { RESPONSE } = process.env;
-            console.log(`response는 여기: ${RESPONSE}`);
-            console.log(`response의 type: ${typeof RESPONSE}`);
-
             const data = JSON.parse(RESPONSE);
-            console.log(data);
+            const url = data.results.url;
+            return url;
 
-    #   if [ "$title" = "${{ steps.package-version.outputs.current-version }}" ]; then
-    #     echo "Title matches: Example Title"
-    #   else
-    #     echo "Title does not match"
-    #     echo "$title"
-    #     exit 1
-    #   fi
-
-    #   - name: Send to Slack via Webhook
-    #     env:
-    #       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-    #       NOTION_LINK: ${{ env.NOTION_LINK }}
-    #       RELEASE_NOTE_CONTENT: ${{ env.RELEASE_NOTE_CONTENT }}
-    #     run: |
-    #       # 결합된 메시지를 Slack으로 전송
-    #       curl -X POST --data-urlencode "payload={
-    #         \"username\": \"GDS-bot\",
-    #         \"attachments\": [
-    #           {
-    #             \"pretext\": \"*@vapor-alarm* Vapor Packages ${{ steps.package-version.outputs.current-version }}(<릴리즈 노트 링크 | 릴리즈 노트>)가 릴리즈 됐습니다 :tada:\",
-    #             \"color\": \"#5094FA\",
-    #           },
-    #           {
-    #             \"color\": \"#36a64f\",
-    #             \"blocks\": [
-    #               {
-    #                 \"type\": \"section\",
-    #                 \"text\": {
-    #                   \"type\": \"mrkdwn\",
-    #                   \"text\": \"${ESCAPED_RELEASE_NOTE_CONTENT}\"
-    #                 }
-    #               }
-    #             ]
-    #           }
-    #         ]
-    #       }" "${{ secrets.SLACK_WEBHOOK_URL }}"
+      - name: Send to Slack via Webhook
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          NOTION_LINK: ${{ steps.release-note-url.outputs.result }}
+        run: |
+          # 결합된 메시지를 Slack으로 전송
+          curl -X POST --data-urlencode "payload={
+            \"username\": \"GDS-bot\",
+            \"attachments\": [
+              {
+                \"pretext\": \"*릴리즈노트* Vapor Packages ${{ steps.package-version.outputs.current-version }}(<릴리즈 노트 링크 | 릴리즈 노트>)가 릴리즈 됐습니다 :tada:\",
+                \"color\": \"#5094FA\",
+              },
+              {
+                \"color\": \"#36a64f\",
+                \"blocks\": [
+                  {
+                    \"type\": \"section\",
+                    \"text\": {
+                      \"type\": \"mrkdwn\",
+                      \"text\": \"${ESCAPED_RELEASE_NOTE_CONTENT}\"
+                    }
+                  }
+                ]
+              }
+            ]
+          }" "${{ secrets.SLACK_WEBHOOK_URL }}"
 
 #   on-failure:
 #     runs-on: ubuntu-latest
