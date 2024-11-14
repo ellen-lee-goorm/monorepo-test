@@ -37,6 +37,18 @@ jobs:
                     "page_size": 1
                 }')
 
+          # 이번 스프린트 릴리즈 노트가 맞는지 확인
+          # 릴리즈 노트 제목 == 버전
+          title=$(echo "$response" | grep -o '"content": "[^"]*' | head -n 1 | sed 's/"content": "//')
+          echo "title=$title" >> $GITHUB_ENV
+
+          if [ "$title" = "${{ steps.package-version.outputs.current-version }}" ]; then
+            echo "Title matches: Example Title"
+          else
+            echo "Title does not match"
+            exit 1
+          fi
+
     #   - name: Send to Slack via Webhook
     #     env:
     #       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
