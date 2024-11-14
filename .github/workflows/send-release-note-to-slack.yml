@@ -30,7 +30,7 @@ jobs:
             -d '{
                     "sorts": [
                     {
-                        "property": "created_time",
+                        "timestamp": "created_time",
                         "direction": "descending"
                     }
                     ],
