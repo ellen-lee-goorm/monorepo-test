@@ -59,7 +59,7 @@ jobs:
             \"username\": \"GDS-bot\",
             \"attachments\": [
               {
-                \"pretext\": \"*릴리즈노트* Vapor Packages ${{ steps.package-version.outputs.current-version }}(<"$NOTION_LINK" | 릴리즈 노트>)가 릴리즈 됐습니다 :tada:\",
+                \"pretext\": \"*릴리즈노트* Vapor Packages ${{ steps.package-version.outputs.current-version }}(<${{env.NOTION_LINK}} | 릴리즈 노트>)가 릴리즈 됐습니다 :tada:\",
                 \"color\": \"#5094FA\",
               },
             ]
