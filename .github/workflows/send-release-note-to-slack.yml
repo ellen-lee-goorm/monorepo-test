@@ -54,6 +54,8 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           NOTION_LINK: ${{ steps.release-note-url.outputs.result }}
         run: |
+          echo "${{env.NOTION_LINK}}"
+
           # 결합된 메시지를 Slack으로 전송
           curl -X POST --data-urlencode "payload={
             \"username\": \"GDS-bot\",
