@@ -1,0 +1,83 @@
+name: "[CD] Vapor Release Note Slack 알림"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  on-success:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Read the Release Note
+        run: |
+
+      - name: Get current package version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@v1.2.3
+        with:
+          path: packages/vapor-components/
+
+      # 노션의 릴리즈 노트 링크 가져옴
+      - name: Get Recent Release note
+        env:
+          NOTION_DATABASE_ID: ${{secrets.NOTION_DATABASE_ID}}
+          NOTION_API_KEY: ${{ secrets.NOTION_API_KEY}}
+        run: |
+          curl -X POST 'https://api.notion.com/v1/databases/"$NOTION_DATABASE_ID"/query' \
+            -H 'Authorization: Bearer "$NOTION_API_KEY"' \
+            -H 'Content-Type: application/json' \
+            -H 'Notion-Version: 2022-06-28' \
+            -d '{
+                    "sorts": [
+                    {
+                        "property": "created_time",
+                        "direction": "descending"
+                    }
+                    ],
+                    "page_size": 1
+                }'
+
+          # 이번 스프린트 릴리즈 노트가 맞는지 확인
+          # 릴리즈 노트 제목 == 버전
+
+    #   - name: Send to Slack via Webhook
+    #     env:
+    #       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+    #       NOTION_LINK: ${{ env.NOTION_LINK }}
+    #       RELEASE_NOTE_CONTENT: ${{ env.RELEASE_NOTE_CONTENT }}
+    #     run: |
+    #       # 결합된 메시지를 Slack으로 전송
+    #       curl -X POST --data-urlencode "payload={
+    #         \"username\": \"GDS-bot\",
+    #         \"attachments\": [
+    #           {
+    #             \"pretext\": \"*@vapor-alarm* Vapor Packages ${{ steps.package-version.outputs.current-version }}(<릴리즈 노트 링크 | 릴리즈 노트>)가 릴리즈 됐습니다 :tada:\",
+    #             \"color\": \"#5094FA\",
+    #           },
+    #           {
+    #             \"color\": \"#36a64f\",
+    #             \"blocks\": [
+    #               {
+    #                 \"type\": \"section\",
+    #                 \"text\": {
+    #                   \"type\": \"mrkdwn\",
+    #                   \"text\": \"${ESCAPED_RELEASE_NOTE_CONTENT}\"
+    #                 }
+    #               }
+    #             ]
+    #           }
+    #         ]
+    #       }" "${{ secrets.SLACK_WEBHOOK_URL }}"
+
+#   on-failure:
+#     runs-on: ubuntu-latest
+#     if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+#     steps:
+#       - name: Get current package version
+#         id: package-version
+#         uses: martinbeentjes/npm-get-version-action@v1.2.3
+#         with:
+#           path: packages/vapor-components/
