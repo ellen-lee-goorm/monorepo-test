@@ -44,6 +44,9 @@ jobs:
           title=$(grep -o '"id": "title".*?"content": "[^"]*' response.json | sed 's/.*"content": "//')
           echo "title=$title" >> $GITHUB_ENV
 
+          echo "$response"
+          echo "$title"
+
           if [ "$title" = "${{ steps.package-version.outputs.current-version }}" ]; then
             echo "Title matches: Example Title"
           else
