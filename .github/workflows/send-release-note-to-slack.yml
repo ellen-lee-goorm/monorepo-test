@@ -59,21 +59,9 @@ jobs:
             \"username\": \"GDS-bot\",
             \"attachments\": [
               {
-                \"pretext\": \"*릴리즈노트* Vapor Packages ${{ steps.package-version.outputs.current-version }}(<릴리즈 노트 링크 | 릴리즈 노트>)가 릴리즈 됐습니다 :tada:\",
+                \"pretext\": \"*릴리즈노트* Vapor Packages ${{ steps.package-version.outputs.current-version }}(<"$NOTION_LINK" | 릴리즈 노트>)가 릴리즈 됐습니다 :tada:\",
                 \"color\": \"#5094FA\",
               },
-              {
-                \"color\": \"#36a64f\",
-                \"blocks\": [
-                  {
-                    \"type\": \"section\",
-                    \"text\": {
-                      \"type\": \"mrkdwn\",
-                      \"text\": \"${ESCAPED_RELEASE_NOTE_CONTENT}\"
-                    }
-                  }
-                ]
-              }
             ]
           }" "${{ secrets.SLACK_WEBHOOK_URL }}"
 
