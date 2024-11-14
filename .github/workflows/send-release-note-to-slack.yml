@@ -37,6 +37,8 @@ jobs:
                     "page_size": 1
                 }')
 
+          echo "$response"
+
           # 이번 스프린트 릴리즈 노트가 맞는지 확인
           # 릴리즈 노트 제목 == 버전
           title=$(echo "$response" | grep -o '"content": "[^"]*' | head -n 1 | sed 's/"content": "//')
