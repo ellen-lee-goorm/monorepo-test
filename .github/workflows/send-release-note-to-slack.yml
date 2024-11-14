@@ -48,7 +48,7 @@ jobs:
             const data = JSON.parse(RESPONSE);
             const url = data.results.url;
 
-            return { result: url };
+            return url
           result-encoding: string
 
       - name: Send to Slack via Webhook
@@ -56,7 +56,7 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           NOTION_LINK: ${{ steps.release-note-url.outputs.result }}
         run: |
-          echo "${{env.NOTION_LINK}}"
+          echo ${{ steps.release-note-url.outputs }}
 
           # 결합된 메시지를 Slack으로 전송
           curl -X POST --data-urlencode "payload={
