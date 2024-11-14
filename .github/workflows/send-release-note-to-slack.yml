@@ -47,6 +47,15 @@ jobs:
             console.log(`response는 여기: ${RESPONSE}`);
             console.log(`response의 type: ${typeof RESPONSE}`);
 
+            const data = JSON.parse(RESPONSE);
+            const title = data.results.properties.version.title[0].plain_text;
+            console.log("title: ", title);
+
+            # if(title === ${{ steps.package-version.outputs.current-version }})
+            #     console.log("Title matches: ", title);
+            # else
+            #     console.log("Title does not match");
+
     #   if [ "$title" = "${{ steps.package-version.outputs.current-version }}" ]; then
     #     echo "Title matches: Example Title"
     #   else
