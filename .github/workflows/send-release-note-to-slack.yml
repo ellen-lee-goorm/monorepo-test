@@ -48,7 +48,7 @@ jobs:
             const data = JSON.parse(RESPONSE);
             const url = data.results.url;
 
-            return url;
+            return { result: url };
           result-encoding: string
 
       - name: Send to Slack via Webhook
