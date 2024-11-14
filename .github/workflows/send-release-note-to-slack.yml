@@ -43,20 +43,9 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            # 이번 스프린트 릴리즈 노트가 맞는지 확인
-            # 릴리즈 노트 제목 == 버전
             const { RESPONSE } = process.env;
             console.log(`response는 여기: ${RESPONSE}`);
             console.log(`response의 type: ${typeof RESPONSE}`);
-
-            # const data = JSON.parse(RESPONSE);
-            # const title = data.results.properties.version.title[0].plain_text;
-            # console.log("title: ", title);
-
-            # if(title === ${{ steps.package-version.outputs.current-version }})
-            #     console.log("Title matches: ", title);
-            # else
-            #     console.log("Title does not match");
 
     #   if [ "$title" = "${{ steps.package-version.outputs.current-version }}" ]; then
     #     echo "Title matches: Example Title"
