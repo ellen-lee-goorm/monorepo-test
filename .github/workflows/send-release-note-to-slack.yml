@@ -42,7 +42,7 @@ jobs:
           # 이번 스프린트 릴리즈 노트가 맞는지 확인
           # 릴리즈 노트 제목 == 버전
           title=$(grep -o '"id": "title".*?"content": "[^"]*' response.json | sed 's/.*"content": "//')
-          echo "title=$title" >> $GITHUB_ENV
+          #echo "title=$title" >> $GITHUB_ENV
 
           echo "$response"
           echo "$title"
@@ -51,6 +51,7 @@ jobs:
             echo "Title matches: Example Title"
           else
             echo "Title does not match"
+            echo "$title"
             exit 1
           fi
 
