@@ -49,8 +49,9 @@ jobs:
 
             const data = JSON.parse(RESPONSE);
             const properties = data.results.properties;
-            const version = properties.version;
             console.log("properties: ", properties);
+
+            const version = properties.version;
             console.log("version: ", version);
 
     #   if [ "$title" = "${{ steps.package-version.outputs.current-version }}" ]; then
