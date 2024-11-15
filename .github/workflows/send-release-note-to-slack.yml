@@ -37,22 +37,31 @@ jobs:
                     "page_size": 1
                 }')
 
-          echo "RESPONSE=$response" >> $GITHUB_ENV
+          echo "$response" > response.json
 
-      - name: Get Release Note's url
-        id: release-note-url
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const { RESPONSE } = process.env;
-            const data = JSON.parse(RESPONSE);
-            const url = data.results.url;
-            console.log(`::set-output name=url::${url}`);
+      - name: Install jq
+        run: sudo apt-get install jq
+
+      #   - name: Get Release Note's url
+      #     id: release-note-url
+      #     uses: actions/github-script@v7
+      #     with:
+      #       script: |
+      #         const { RESPONSE } = process.env;
+      #         const data = JSON.parse(RESPONSE);
+      #         const url = data.results.url;
+      #         console.log(`::set-output name=url::${url}`);
+
+      - name: Extract title using jq
+        run: |
+          url=$(jq -r '.results[0].url' response.json)
+          echo "url: $url"
+          echo "URL=$url" >> $GITHUB_ENV
 
       - name: Send to Slack via Webhook
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          NOTION_LINK: ${{ steps.release-note-url.outputs.url }}
+          NOTION_LINK: ${{ env.URL }}
         run: |
           echo ${{ steps.release-note-url.outputs }}
 
