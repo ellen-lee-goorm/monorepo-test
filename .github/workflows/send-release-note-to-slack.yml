@@ -47,15 +47,12 @@ jobs:
             const { RESPONSE } = process.env;
             const data = JSON.parse(RESPONSE);
             const url = data.results.url;
-            console.log(`url: ${url}, url-type: ${typeof url}`);
-
-            return url;
-          result-encoding: string
+            console.log(`::set-output name=url::${url}`);
 
       - name: Send to Slack via Webhook
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          NOTION_LINK: ${{ steps.release-note-url.outputs.result }}
+          NOTION_LINK: ${{ steps.release-note-url.outputs.url }}
         run: |
           echo ${{ steps.release-note-url.outputs }}
 
