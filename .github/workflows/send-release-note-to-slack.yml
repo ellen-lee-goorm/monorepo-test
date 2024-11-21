@@ -46,6 +46,7 @@ jobs:
                     "page_size": 1
                 }')
 
+          echo "$response"
           echo "$response" > response.json
 
       - name: Install jq
