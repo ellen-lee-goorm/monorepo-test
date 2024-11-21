@@ -71,7 +71,7 @@ jobs:
             \"attachments\": [
               {
                 \"pretext\": \"*@vapor-alarm* Vapor Packages ${{ steps.package-version.outputs.current-version }}(<${{env.NOTION_LINK}}| 릴리즈 노트>)가 릴리즈 됐습니다 :tada:\",
-                \"text\": \"> :link: <${{secrets.NOTION_PAGE_LINK}}|Release Note> 페이지\",
+                \"text\": \":link: <${{secrets.NOTION_PAGE_LINK}}|Release Note> 페이지\",
                 \"color\": \"#5094FA\",
               }
             ]
