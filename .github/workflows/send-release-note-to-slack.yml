@@ -17,14 +17,14 @@ jobs:
         with:
           path: packages/my-components/
 
-      - name: Check Regular Release
-        run: |
-          version=${{ steps.package-version.outputs.current-version }}
-          if [[ "${version: -1}" != "0" ]]; then
-              echo "정기 릴리즈가 아닙니다."
-              exit 1
-          fi
-          echo "정기릴리즈 입니다."
+      # - name: Check Regular Release
+      #   run: |
+      #     version=${{ steps.package-version.outputs.current-version }}
+      #     if [[ "${version: -1}" != "0" ]]; then
+      #         echo "정기 릴리즈가 아닙니다."
+      #         exit 1
+      #     fi
+      #     echo "정기릴리즈 입니다."
 
       # 노션의 릴리즈 노트 링크 가져옴
       - name: Get Recent Release note
