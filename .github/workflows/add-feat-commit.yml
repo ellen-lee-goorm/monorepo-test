@@ -37,8 +37,8 @@ jobs:
       # 다음 정기 릴리즈 버전
       - name: Get Next package version
         run: |
-          current-version=${{ steps.package-version.outputs.current-version }}
-          IFS='.' read -r -a version_parts <<< "$current-version"
+          current_version=${{ steps.package-version.outputs.current-version }}
+          version_parts=($(echo $current_version | tr "." "\n"))
           minor_version=$((version_parts[1] + 1))
           new_version="${version_parts[0]}.$minor_version.${version_parts[2]}"
           echo "new_version=$new_version" >> $GITHUB_ENV
