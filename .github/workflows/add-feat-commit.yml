@@ -27,10 +27,26 @@ jobs:
         with:
           node-version: "18.20.0"
 
+      # 현재 버전 정보 조회
+      - name: Get current package version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@v1.2.3
+        with:
+          path: packages/my-components
+
+      # 다음 정기 릴리즈 버전
+      - name: Get Next package version
+        run: |
+          current-version=${{ steps.package-version.outputs.current-version }}
+          IFS='.' read -r -a version_parts <<< "$current-version"
+          minor_version=$((version_parts[1] + 1))
+          new_version="${version_parts[0]}.$minor_version.${version_parts[2]}"
+          echo "new_version=$new_version" >> $GITHUB_ENV
+
       - name: Add a feat Commit
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-          git commit --allow-empty -m "feat: 정기 릴리즈를 위한 커밋"
+          git commit --allow-empty -m "feat: v${{ env.new_version }} 릴리즈"
           git push origin
