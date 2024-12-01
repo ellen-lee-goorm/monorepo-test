@@ -76,8 +76,17 @@ jobs:
           # 최근 '##' 헤더부터 이전 '##' 헤더까지 내용을 CHANGELOG.md에서 추출
           CHANGELOG=$(awk '/^## /{if (found) exit; found=1} found{print}' CHANGELOG.md)
 
+          # Step 2: **로 감싸져 있는 텍스트를 볼드체로 변환
+          TARGET_SECTION=$(echo "$TARGET_SECTION" | sed -E 's/\*\*(.+?)\*\*/<b>\1<\/b>/g')
+
+          # Step 3: ### 헤딩 중 "버전"이 아닌 커밋 타입을 볼드체로 변환
+          TARGET_SECTION=$(echo "$TARGET_SECTION" | sed -E 's/### (.+)/<b>\1<\/b>/g')
+
+          # Step 4: *로 시작하는 텍스트를 리스트 형식으로 변경
+          TARGET_SECTION=$(echo "$TARGET_SECTION" | sed -E 's/^\* (.+)/- \1/g')
+
           # 마크다운 타이틀을 Slack에서 굵게로 변환
-          CHANGELOG=$(echo "$CHANGELOG" | sed -E 's/^##+ (.+)/*\1*/')
+          # CHANGELOG=$(echo "$CHANGELOG" | sed -E 's/^##+ (.+)/*\1*/')
 
           # 마크다운 URL을 Slack 포맷 URL로 변환
           CHANGELOG=$(echo "$CHANGELOG" | sed -E 's/\\?([[][^]]+]\\?)\\?[(]([^()]+)\\?[)]/<\2|\1>/g')
